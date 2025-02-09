@@ -101,3 +101,18 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+.movies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.movie-card {
+    width: 200px;
+    text-align: center;
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 10px;
+}
