@@ -1,11 +1,21 @@
 namespace API_Examen.Models; 
+using System.Text.Json.Serialization;
 
+public class MovieResponse
+{
+    [JsonPropertyName("results")]
+    public List<Movie> Results { get; set; }
+}
 public class Movie
 {
-    public int Id { get; set; }
+    [JsonPropertyName("title")]
     public string Title { get; set; }
+
+    [JsonPropertyName("overview")]
     public string Overview { get; set; }
+
+    [JsonPropertyName("poster_path")]
     public string PosterPath { get; set; }
 
-    public string FullPosterPath => $"https://image.tmdb.org/t/p/w500{PosterPath}";
+    public string FullPosterPath => $"{PosterPath}";
 }

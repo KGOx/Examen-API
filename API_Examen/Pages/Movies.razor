@@ -1,35 +1,71 @@
 @page "/movies"
-@inject MovieService MovieService
-
 @using API_Examen.Models
+@using System.Text.Json
+@using Blazored.LocalStorage
+@inject MovieService MovieService
+@inject ILocalStorageService localStorage
 
-<PageTitle>Films</PageTitle>
 
-<h3>Films Populaires</h3>
+<h3>Films en Tendance</h3>
 
 @if (movies == null)
 {
-    <p>Chargement...</p>
+    <p>Chargement en cours...</p>
+}
+else if (movies.Count == 0)
+{
+    <p>Aucun film trouvé.</p>
 }
 else
 {
-    <div class="movies">
+    <div class="movies-container">
         @foreach (var movie in movies)
         {
             <div class="movie-card">
-                <img src="@movie.FullPosterPath" alt="@movie.Title" />
+                <img src="@($"https://image.tmdb.org/t/p/w500{movie.PosterPath}")" alt="@movie.Title" />
+                <button class="fav-button" @onclick="() => ToggleFavorite(movie)">❤️ Ajouter aux favoris</button>
                 <h4>@movie.Title</h4>
                 <p>@movie.Overview</p>
-            </div>
+            </div><br> 
         }
     </div>
 }
 
 @code {
     private List<Movie> movies;
+    private List<Movie> favoriteMovies = new();
 
     protected override async Task OnInitializedAsync()
     {
-        movies = await MovieService.GetPopularMoviesAsync();
+        movies = await MovieService.GetTrendingMoviesAsync();
+        LoadFavorites();
+    }
+    private void ToggleFavorite(Movie movie)
+    {
+        if (favoriteMovies.Any(m => m.Title == movie.Title))
+        {
+            favoriteMovies.RemoveAll(m => m.Title == movie.Title);
+        }
+        else
+        {
+            favoriteMovies.Add(movie);
+        }
+
+        SaveFavorites();
+    }
+
+    private async Task LoadFavorites()
+    {
+        var json = await localStorage.GetItemAsStringAsync("favoriteMovies");
+        if (!string.IsNullOrEmpty(json))
+        {
+            favoriteMovies = JsonSerializer.Deserialize<List<Movie>>(json) ?? new List<Movie>();
+        }
+    }
+
+    private async Task SaveFavorites()
+    {
+        var json = JsonSerializer.Serialize(favoriteMovies);
+        await localStorage.SetItemAsStringAsync("favoriteMovies", json);
     }
 }
