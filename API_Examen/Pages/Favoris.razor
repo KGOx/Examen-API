@@ -1,0 +1,76 @@
+@page "/favoris"
+@using API_Examen.Models
+@using System.Text.Json
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+
+<h3>Mes Films Favoris</h3>
+
+@if (favoriteMovies == null)
+{
+    <p>Chargement en cours...</p>
+}
+else if (favoriteMovies.Count == 0)
+{
+    <p>Aucun film en favoris.</p>
+}
+else
+{
+    <div class="movies-container">  
+        @foreach (var movie in favoriteMovies)
+        {
+            <div class="movie-card">
+                <img src="@($"https://image.tmdb.org/t/p/w500{movie.PosterPath}")" alt="@movie.Title" />
+                <button class="fav-buttons" @onclick="() => ToggleFavorite(movie)">
+                    <img src="@(IsFavorite(movie) ? "heart_red.png" : "heart_gray.png")" alt="Favoris" />
+                </button>
+                <h4>@movie.Title</h4>
+                <p>@movie.Release_Date</p>
+                <p>@movie.Overview</p>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Movie> favoriteMovies = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFavorites();
+    }
+
+    private async Task LoadFavorites()
+    {
+        var json = await localStorage.GetItemAsStringAsync("favoriteMovies");
+        if (!string.IsNullOrEmpty(json))
+        {
+            favoriteMovies = JsonSerializer.Deserialize<List<Movie>>(json) ?? new List<Movie>();
+        }
+    }
+
+    private async Task ToggleFavorite(Movie movie)
+    {
+        if (favoriteMovies.Any(m => m.Title == movie.Title))
+        {
+            favoriteMovies.RemoveAll(m => m.Title == movie.Title);
+        }
+        else
+        {
+            favoriteMovies.Add(movie);
+        }
+
+        await SaveFavorites();
+    }
+
+    private bool IsFavorite(Movie movie)
+    {
+        return favoriteMovies.Any(m => m.Title == movie.Title);
+    }
+
+    private async Task SaveFavorites()
+    {
+        var json = JsonSerializer.Serialize(favoriteMovies);
+        await localStorage.SetItemAsStringAsync("favoriteMovies", json);
+    }
+}

@@ -18,4 +18,10 @@ public class Movie
     public string PosterPath { get; set; }
 
     public string FullPosterPath => $"{PosterPath}";
+
+    [JsonPropertyName("release_date")]
+    public string Release_Date {get; set; }
+
+    [JsonPropertyName("id")]
+    public int ID {get; set; }
 }
