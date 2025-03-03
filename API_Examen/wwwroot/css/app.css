@@ -149,3 +149,8 @@ code {
     object-fit: contain;
 }
 
+.vote-average {
+    color: #f3ce13 !important;
+    font-weight: bold;
+    size: 50px;
+}

@@ -27,7 +27,7 @@ else
                     <img src="@(IsFavorite(movie) ? "heart_red.png" : "heart_gray.png")" alt="Favoris" />
                 </button>
                 <h4>@movie.Title</h4>
-                <p>@movie.Release_Date</p>
+                <p><span class="vote-average">@movie.GetFormattedVoteAverage()</span> - @movie.Release_Date</p>
                 <p>@movie.Overview</p>
             </div>
         }
@@ -40,7 +40,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        movies = await MovieService.GetTrendingMoviesAsync();
+        movies = await MovieService.GetTrendingMoviesAsync(10);
         await LoadFavorites();
     }
     private bool IsFavorite(Movie movie)
@@ -56,6 +56,7 @@ else
         }
         else
         {
+            movie.Status = "Neutre";
             favoriteMovies.Add(movie);
         }
 

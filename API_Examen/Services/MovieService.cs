@@ -16,30 +16,64 @@ public class MovieService
         _bearerToken = configuration["TMDB:BearerToken"];
     }
 
-    public async Task<List<Movie>> GetTrendingMoviesAsync()
+    public async Task<List<Movie>> GetTrendingMoviesAsync(int totalPages = 10)
     {
-        var request = new HttpRequestMessage
+        List<Movie> allMovies = new List<Movie>();
+
+        for (int i = 1; i <= totalPages; i++) // Boucle sur plusieurs pages
         {
-            Method = HttpMethod.Get,
-            RequestUri = new Uri("https://api.themoviedb.org/3/trending/movie/day?language=fr-FR")
-        };
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"https://api.themoviedb.org/3/trending/movie/week?language=fr-FR&page={i}")
+            };
 
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
 
-        var response = await _httpClient.SendAsync(request);
+            var response = await _httpClient.SendAsync(request);
 
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new Exception("Erreur 401 : Vérifie ton Bearer Token dans appsettings.json.");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new Exception("Erreur 401 : Vérifie ton Bearer Token dans appsettings.json.");
+            }
+
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var movieResponse = JsonSerializer.Deserialize<MovieResponse>(json, options);
+
+            if (movieResponse?.Results != null)
+            {
+                allMovies.AddRange(movieResponse.Results);
+            }
         }
 
-        response.EnsureSuccessStatusCode();
-        var json = await response.Content.ReadAsStringAsync();
-
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var movieResponse = JsonSerializer.Deserialize<MovieResponse>(json, options);
-
-        return movieResponse?.Results ?? new List<Movie>();
+        return allMovies;
     }
+    //     var request = new HttpRequestMessage
+    //     {
+    //         Method = HttpMethod.Get,
+    //         RequestUri = new Uri("https://api.themoviedb.org/3/trending/movie/day?language=fr-FR")
+    //     };
+
+    //     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    //     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
+
+    //     var response = await _httpClient.SendAsync(request);
+
+    //     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+    //     {
+    //         throw new Exception("Erreur 401 : Vérifie ton Bearer Token dans appsettings.json.");
+    //     }
+
+    //     response.EnsureSuccessStatusCode();
+    //     var json = await response.Content.ReadAsStringAsync();
+
+    //     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    //     var movieResponse = JsonSerializer.Deserialize<MovieResponse>(json, options);
+
+    //     return movieResponse?.Results ?? new List<Movie>();
+    // }
 }

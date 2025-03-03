@@ -25,7 +25,15 @@ else
                     <img src="@(IsFavorite(movie) ? "heart_red.png" : "heart_gray.png")" alt="Favoris" />
                 </button>
                 <h4>@movie.Title</h4>
-                <p>@movie.Release_Date</p>
+
+                <select @onchange="(e) => ChangeStatus(movie, e.Value.ToString())">
+                    <option value="Neutre" selected="@(movie.Status == "Neutre")">Neutre</option>
+                    <option value="J'aime" selected="@(movie.Status == "J'aime")">J'aime</option>
+                    <option value="J'aime beaucoup" selected="@(movie.Status == "J'aime beaucoup")">J'aime beaucoup</option>
+                    <option value="Je n'aime pas" selected="@(movie.Status == "Je n'aime pas")">Je n'aime pas</option>
+                </select>
+
+                <p><span class="vote-average">@movie.GetFormattedVoteAverage()</span> - @movie.Release_Date</p>
                 <p>@movie.Overview</p>
             </div>
         }
@@ -38,6 +46,11 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadFavorites();
+    }
+    private void ChangeStatus(Movie movie, string newStatus)
+    {
+        movie.Status = newStatus;
+        SaveFavorites(); // Sauvegarde dans localStorage
     }
 
     private async Task LoadFavorites()
