@@ -5,9 +5,11 @@ html, body {
 h1:focus {
     outline: none;
 }
+
 h3 {
     text-align: center;
 }
+
 a, .btn-link {
     color: #0071c1;
 }
@@ -103,6 +105,7 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
 .movies-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -115,14 +118,16 @@ code {
     background: #1e1e1e;
     color: white;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 22px;
     text-align: center;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
     transition: transform 0.2s ease-in-out;
 }
+
 .movie-card:hover {
     transform: scale(1.05);
 }
+
 .movie-card img {
     width: 100%;
     border-radius: 10px;
@@ -130,6 +135,7 @@ code {
     max-height: 300px;
     object-fit: cover;
 }
+
 .fav-buttons {
     background: #3c3c3c; 
     border: gray;
@@ -142,6 +148,7 @@ code {
     height: auto;
     border-radius: 5px;
 }
+
 .fav-buttons img {
     background: transparent;
     width: 32px;

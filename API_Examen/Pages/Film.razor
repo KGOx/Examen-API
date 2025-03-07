@@ -40,24 +40,24 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        movies = await MovieService.GetTrendingMoviesAsync(10);
+        movies = await MovieService.GetTrendingMoviesAsync(10); // Charge les films tendances (10 pages) depuis l'API TMDB via le service `MovieService`.
         await LoadFavorites();
     }
     private bool IsFavorite(Movie movie)
     {
-        return favoriteMovies.Any(m => m.Title == movie.Title);
+        return favoriteMovies.Any(m => m.Title == movie.Title); // Vérifie si un film est déjà présent dans la liste des favoris.
     }
     
     private void ToggleFavorite(Movie movie)
     {
         if (favoriteMovies.Any(m => m.Title == movie.Title))
         {
-            favoriteMovies.RemoveAll(m => m.Title == movie.Title);
+            favoriteMovies.RemoveAll(m => m.Title == movie.Title); // Si le film est déjà dans les favoris, il est supprimé.
         }
         else
         {
             movie.Status = "Neutre";
-            favoriteMovies.Add(movie);
+            favoriteMovies.Add(movie); // Sinon, il est ajouté à la liste des favoris avec un statut par défaut ("Neutre").
         }
 
         SaveFavorites();
@@ -65,16 +65,16 @@ else
 
     private async Task LoadFavorites()
     {
-        var json = await localStorage.GetItemAsStringAsync("favoriteMovies");
+        var json = await localStorage.GetItemAsStringAsync("favoriteMovies"); // Récupère les données des favoris sous forme de chaîne JSON depuis le stockage local.
         if (!string.IsNullOrEmpty(json))
         {
-            favoriteMovies = JsonSerializer.Deserialize<List<Movie>>(json) ?? new List<Movie>();
+            favoriteMovies = JsonSerializer.Deserialize<List<Movie>>(json) ?? new List<Movie>(); // Désérialise les données JSON en une liste d'objets `Movie`.
         }
     }
 
     private async Task SaveFavorites()
     {
-        var json = JsonSerializer.Serialize(favoriteMovies);
-        await localStorage.SetItemAsStringAsync("favoriteMovies", json);
+        var json = JsonSerializer.Serialize(favoriteMovies); // Sérialise la liste des films favoris en une chaîne JSON.
+        await localStorage.SetItemAsStringAsync("favoriteMovies", json); // Enregistre cette chaîne JSON dans le stockage local sous la clé "favoriteMovies".
     }
 }
