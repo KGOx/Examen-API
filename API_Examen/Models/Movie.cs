@@ -8,8 +8,8 @@ public class MovieResponse
 }
 public class Movie
 {
-    [JsonPropertyName("title")]
-    public string Title { get; set; }
+    [JsonPropertyName("title")] // Les JsonPropertyName est utilisé quand, le nom de la propriété n'est pas le même que celui utilisé en C#.
+    public string Title { get; set; } // Car quand on fait appel a l'API, il nous fournit des données au format JSON. Et donc ça permet de bien cvonvertir grâce a System.text.json
     
     public string Status {get; set; } = "Neutre";
 
@@ -29,7 +29,7 @@ public class Movie
         }
         else
         {
-            return Vote_Average.ToString("F1");
+            return Vote_Average.ToString("F1"); // Arrondir a 1 chiffre après la virgule 
         }
     }
     public string FullPosterPath => $"{PosterPath}";

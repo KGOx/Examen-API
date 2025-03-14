@@ -6,11 +6,11 @@
 
 <h3>Mes Films Favoris</h3>
 
-@if (favoriteMovies == null)
+@if (favoriteMovies == null) // En attente du chargement de tous les films de l'API
 {
     <p>Chargement en cours...</p>
 }
-else if (favoriteMovies.Count == 0)
+else if (favoriteMovies.Count == 0) // Si aucun favoris = on call "aucun film"
 {
     <p>Aucun film en favoris.</p>
 }
@@ -45,7 +45,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadFavorites();
+        await LoadFavorites(); // Attend de bien avoir chargé tous les favoris avant de passé a la suite
     }
     private async Task ChangeStatus(Movie movie, string newStatus)
     {
